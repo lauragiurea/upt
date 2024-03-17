@@ -1,4 +1,4 @@
-package com.licenta.exam;
+package com.licenta.exam.grading;
 
 public enum GradeStatus {
     OK(1),

@@ -1,4 +1,4 @@
-package com.licenta.exam;
+package com.licenta.exam.committees;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

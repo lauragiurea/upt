@@ -1,5 +1,10 @@
 package com.licenta.exam;
 
+import com.licenta.exam.committees.CommitteeStudentsData;
+import com.licenta.exam.committees.CommitteesHandler;
+import com.licenta.exam.grading.ExamGradingHandler;
+import com.licenta.exam.grading.GradeRequestData;
+import com.licenta.exam.grading.GradeResponseData;
 import com.licenta.session.Session;
 import com.licenta.session.SessionHandler;
 

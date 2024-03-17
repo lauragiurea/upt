@@ -1,4 +1,4 @@
-package com.licenta.exam;
+package com.licenta.exam.committees;
 
 import com.licenta.db.DbConnectionHandler;
 import com.licenta.session.Session;
