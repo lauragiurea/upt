@@ -3,8 +3,8 @@ package com.licenta.exam;
 import com.licenta.exam.committees.CommitteeStudentsData;
 import com.licenta.exam.committees.CommitteesHandler;
 import com.licenta.exam.grading.ExamGradingHandler;
-import com.licenta.exam.grading.GradeRequestData;
-import com.licenta.exam.grading.GradeResponseData;
+import com.licenta.exam.grading.ExamGradeRequestData;
+import com.licenta.exam.grading.ExamGradeResponseData;
 import com.licenta.session.Session;
 import com.licenta.session.SessionHandler;
 
@@ -16,7 +16,7 @@ public class ExamRequestHandler {
     @GET
     @Path("{sessionId}/committeeStudents")
     @Produces(MediaType.APPLICATION_JSON)
-    public CommitteeStudentsData getCommitteeStudentsBySession(@PathParam("sessionId") int sessionId) {
+    public CommitteeStudentsData getCommitteeStudentsBySession(@PathParam("sessionId") int sessionId) throws Exception {
         Session session = SessionHandler.getSessionById(sessionId);
         return CommitteesHandler.getCommitteeStudents(session);
     }
@@ -31,7 +31,7 @@ public class ExamRequestHandler {
     @POST
     @Path("{sessionId}/grade")
     @Produces(MediaType.APPLICATION_JSON)
-    public GradeResponseData handleGrading(@PathParam("sessionId") int sessionId, GradeRequestData data) {
+    public ExamGradeResponseData handleGrading(@PathParam("sessionId") int sessionId, ExamGradeRequestData data) throws Exception {
         Session session = SessionHandler.getSessionById(sessionId);
         return ExamGradingHandler.addGrade(session, data);
     }

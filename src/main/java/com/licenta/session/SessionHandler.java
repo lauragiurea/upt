@@ -13,8 +13,12 @@ public class SessionHandler {
 
     private static final Map<Integer, Session> sessionsCache = new HashMap<>();
 
-    public static Session getSessionById(int sessionId) {
-        return sessionsCache.get(sessionId) == null ? getSessionFromDB(sessionId) : sessionsCache.get(sessionId);
+    public static Session getSessionById(int sessionId) throws Exception {
+        Session session = sessionsCache.get(sessionId) == null ? getSessionFromDB(sessionId) : sessionsCache.get(sessionId);
+        if (session == null) {
+            throw new Exception("Session not found!");
+        }
+        return session;
     }
 
     private static final String SQ_GET_SESSION_FROM_DB = """

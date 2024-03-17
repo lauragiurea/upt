@@ -2,7 +2,7 @@ package com.licenta.exam.grading;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class GradeRequestData {
+public class ExamGradeRequestData {
     @JsonProperty("knowledgeGrade")
     public float knowledgeGrade;
 

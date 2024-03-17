@@ -2,7 +2,7 @@ package com.licenta.exam.grading;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class GradeResponseData {
+public class ExamGradeResponseData {
     @JsonProperty("mean")
     public float mean;
 

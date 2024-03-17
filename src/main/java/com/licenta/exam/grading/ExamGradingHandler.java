@@ -17,8 +17,8 @@ public class ExamGradingHandler {
             knowledgeGrade = newValues.knowledgeGrade,
             mean = newValues.mean;
             """;
-    public static GradeResponseData addGrade(Session session, GradeRequestData data) {
-        GradeResponseData gradeResponseData = new GradeResponseData();
+    public static ExamGradeResponseData addGrade(Session session, ExamGradeRequestData data) {
+        ExamGradeResponseData gradeResponseData = new ExamGradeResponseData();
         float mean = (data.projectGrade + data.knowledgeGrade) / 2;
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_ADD_GRADE);
@@ -31,7 +31,7 @@ public class ExamGradingHandler {
             connection.close();
         } catch (Exception e) {
             gradeResponseData.mean = 0;
-            gradeResponseData.status = GradeStatus.PENDING.toString();
+            gradeResponseData.status = ExamGradeStatus.PENDING.toString();
             return gradeResponseData;
         }
         gradeResponseData.mean = mean;
@@ -43,7 +43,7 @@ public class ExamGradingHandler {
             SELECT schoolGrade FROM upt.students
             WHERE idStud = ?;
             """;
-    private static GradeStatus checkGrade(int studentId, float grade) {
+    private static ExamGradeStatus checkGrade(int studentId, float grade) {
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_SCHOOL_GRADE);
             statement.setInt(1, studentId);
@@ -53,10 +53,10 @@ public class ExamGradingHandler {
                 schoolGrade = rs.getInt("schoolGrade");
             }
             connection.close();
-            return schoolGrade == 0 ? GradeStatus.PENDING :
-                    Math.abs(schoolGrade - grade) <= 2 ? GradeStatus.OK : GradeStatus.NOK;
+            return schoolGrade == 0 ? ExamGradeStatus.PENDING :
+                    Math.abs(schoolGrade - grade) <= 2 ? ExamGradeStatus.OK : ExamGradeStatus.NOK;
         } catch (Exception e) {
-            return GradeStatus.PENDING;
+            return ExamGradeStatus.PENDING;
         }
     }
 }
