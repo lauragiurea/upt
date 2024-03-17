@@ -1,4 +1,4 @@
-package com.licenta.grading;
+package com.licenta.exam;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

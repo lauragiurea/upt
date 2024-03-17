@@ -1,8 +1,11 @@
-package com.licenta.grading;
+package com.licenta.exam;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Student {
+    @JsonProperty("userId")
+    public int userId;
+
     @JsonProperty("lastName")
     public String lastName;
 

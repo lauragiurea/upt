@@ -1,4 +1,4 @@
-package com.licenta.grading;
+package com.licenta.exam;
 
 import com.licenta.db.DbConnectionHandler;
 import com.licenta.session.Session;
@@ -18,7 +18,7 @@ public class CommitteesHandler {
     }
 
     private static final String SQL_GET_COMMITTEE_STUDENTS = """
-            SELECT lastname, firstName, projectname, hour, schoolGrade FROM upt.committeeStudents
+            SELECT idStud, lastname, firstName, projectname, hour, schoolGrade FROM upt.committeeStudents
             JOIN upt.students USING (idStud)
             JOIN upt.accounts ON id = idStud
             WHERE committeeId = ?;
@@ -33,7 +33,7 @@ public class CommitteesHandler {
                 students.add(getStudentDetails(rs));
             }
             connection.close();
-            return new CommitteeStudentsData(students);
+            return new CommitteeStudentsData(students, committeeId);
         } catch (Exception e) {
             return new CommitteeStudentsData();
         }
@@ -41,6 +41,7 @@ public class CommitteesHandler {
 
     private static Student getStudentDetails(ResultSet rs) throws SQLException {
         Student student = new Student();
+        student.userId = rs.getInt("idStud");
         student.lastName = rs.getString("lastName");
         student.firstName = rs.getString("firstName");
         student.projectName = rs.getString("projectName");

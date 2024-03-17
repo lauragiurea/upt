@@ -1,4 +1,4 @@
-package com.licenta.grading;
+package com.licenta.exam;
 
 import com.licenta.session.Session;
 import com.licenta.session.SessionHandler;
@@ -21,5 +21,14 @@ public class ExamRequestHandler {
     @Produces(MediaType.APPLICATION_JSON)
     public CommitteeStudentsData getCommitteeStudents(@PathParam("committeeId") int committeeId) {
         return CommitteesHandler.getCommitteeStudents(committeeId);
+    }
+
+    @POST
+    @Path("{sessionId}/grade")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String handleGrading(@PathParam("sessionId") int sessionId, GradeRequestData data) {
+        Session session = SessionHandler.getSessionById(sessionId);
+        ExamGradingHandler.addGrade(session, data);
+        return "";
     }
 }
