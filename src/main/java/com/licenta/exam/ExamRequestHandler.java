@@ -25,10 +25,9 @@ public class ExamRequestHandler {
 
     @POST
     @Path("{sessionId}/grade")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String handleGrading(@PathParam("sessionId") int sessionId, GradeRequestData data) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public GradeResponseData handleGrading(@PathParam("sessionId") int sessionId, GradeRequestData data) {
         Session session = SessionHandler.getSessionById(sessionId);
-        ExamGradingHandler.addGrade(session, data);
-        return "";
+        return ExamGradingHandler.addGrade(session, data);
     }
 }
