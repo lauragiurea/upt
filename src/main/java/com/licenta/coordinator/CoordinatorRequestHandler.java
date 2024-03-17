@@ -10,19 +10,29 @@ import javax.ws.rs.core.MediaType;
 public class CoordinatorRequestHandler {
 
     @GET
-    @Path("addStudent/{studentId}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String handleAddStudent(@PathParam("sessionId") int sessionId, @PathParam("studentId") int studentId) throws Exception {
+    @Path("getStudents")
+    @Produces(MediaType.APPLICATION_JSON)
+    public CoordStudentsData handleGetStudents(@PathParam("sessionId") int sessionId) throws Exception {
         Session session = SessionHandler.getSessionById(sessionId);
-        CoordStudentsHandler.addStudent(session, studentId);
+        return CoordStudentsHandler.getStudents(session);
+    }
+
+    @POST
+    @Path("addStudent")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String handleAddStudent(@PathParam("sessionId") int sessionId, AddStudentRequestData data) throws Exception {
+        Session session = SessionHandler.getSessionById(sessionId);
+        int studentId = SessionHandler.getUserByEmail(data.email);
+        CoordStudentsHandler.addStudent(session, studentId, data.projectName, data.schoolGrade);
         return "";
     }
 
     @GET
-    @Path("deleteStudent/{studentId}")
+    @Path("deleteStudent/{studentEmail}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String handleDeleteStudent(@PathParam("sessionId") int sessionId, @PathParam("studentId") int studentId) throws Exception {
+    public String handleDeleteStudent(@PathParam("sessionId") int sessionId, @PathParam("studentEmail") String studentEmail) throws Exception {
         Session session = SessionHandler.getSessionById(sessionId);
+        int studentId = SessionHandler.getUserByEmail(studentEmail);
         CoordStudentsHandler.deleteStudent(session, studentId);
         return "";
     }

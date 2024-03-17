@@ -28,7 +28,7 @@ public class CommitteesHandler {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_COMMITTEE_STUDENTS);
             statement.setInt(1, committeeId);
             ResultSet rs = statement.executeQuery();
-            List<Student> students = new ArrayList<>();
+            List<ExamStudentData> students = new ArrayList<>();
             while (rs.next()) {
                 students.add(getStudentDetails(rs));
             }
@@ -39,8 +39,8 @@ public class CommitteesHandler {
         }
     }
 
-    private static Student getStudentDetails(ResultSet rs) throws SQLException {
-        Student student = new Student();
+    private static ExamStudentData getStudentDetails(ResultSet rs) throws SQLException {
+        ExamStudentData student = new ExamStudentData();
         student.userId = rs.getInt("idStud");
         student.lastName = rs.getString("lastName");
         student.firstName = rs.getString("firstName");

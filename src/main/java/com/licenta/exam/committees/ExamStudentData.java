@@ -2,7 +2,7 @@ package com.licenta.exam.committees;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Student {
+public class ExamStudentData {
     @JsonProperty("userId")
     public int userId;
 

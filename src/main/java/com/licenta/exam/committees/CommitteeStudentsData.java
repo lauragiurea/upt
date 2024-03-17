@@ -14,7 +14,7 @@ public class CommitteeStudentsData {
     private final int count;
 
     @JsonProperty("students")
-    private final List<Student> students;
+    private final List<ExamStudentData> students;
 
     public CommitteeStudentsData() {
         this.committeeId = 0;
@@ -22,17 +22,9 @@ public class CommitteeStudentsData {
         this.count = 0;
     }
 
-    public CommitteeStudentsData(List<Student> students, int committeeId) {
+    public CommitteeStudentsData(List<ExamStudentData> students, int committeeId) {
         this.committeeId = committeeId;
         this.students = students;
         this.count = students.size();
-    }
-
-    public void addStudents(List<Student> students) {
-        this.students.addAll(students);
-    }
-
-    public List<Student> getStudents() {
-        return this.students;
     }
 }

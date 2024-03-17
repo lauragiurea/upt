@@ -12,6 +12,35 @@ import java.util.Map;
 public class SessionHandler {
 
     private static final Map<Integer, Session> sessionsCache = new HashMap<>();
+    private static final Map<String, Integer> usersByEmail = new HashMap<>();
+
+    public static int getUserByEmail(String email) throws Exception {
+        int userId = usersByEmail.get(email) == null ? getUserFromDb(email) : usersByEmail.get(email);
+        if (userId == 0) {
+            throw new Exception("User not found!");
+        }
+        return userId;
+    }
+
+    private static final String SQL_GET_USER_FROM_DB = """
+            SELECT id FROM upt.accounts
+            WHERE email = ?;
+            """;
+    private static int getUserFromDb(String email) {
+        try (Connection connection = DbConnectionHandler.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SQL_GET_USER_FROM_DB);
+            statement.setString(1, email);
+            ResultSet rs = statement.executeQuery();
+            int userId = 0;
+            while (rs.next()) {
+                userId = rs.getInt("id");
+            }
+            connection.close();
+            return userId;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 
     public static Session getSessionById(int sessionId) throws Exception {
         Session session = sessionsCache.get(sessionId) == null ? getSessionFromDB(sessionId) : sessionsCache.get(sessionId);
@@ -59,6 +88,7 @@ public class SessionHandler {
             if (sessionId != 0) {
                 Session session = new Session(sessionId, userId, data.email);
                 sessionsCache.putIfAbsent(sessionId, session);
+                usersByEmail.putIfAbsent(data.email, userId);
                 return new SessionNewResponseData(sessionId, session.getRole().toString());
             } else {
                 throw new Exception("Session could not be created");
