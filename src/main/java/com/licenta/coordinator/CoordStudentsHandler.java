@@ -16,7 +16,10 @@ public class CoordStudentsHandler {
 
     private static final String SQL_ADD_STUDENT = """
             INSERT INTO upt.students (idStud, projectName, schoolGrade, coordinator)
-            VALUES (?,?,?,?);
+            VALUES (?,?,?,?) as newValues
+            ON DUPLICATE KEY UPDATE
+            projectName = newValues.projectName,
+            schoolGrade = newValues.schoolGrade;
             """;
     public static void addStudent(Session session, int studentId, String projectName, float schoolGrade) {
         try (Connection connection = DbConnectionHandler.getConnection()) {
@@ -66,7 +69,7 @@ public class CoordStudentsHandler {
     }
 
     private static final String SQL_GET_COORD_STUDENTS = """
-            SELECT firstName, lastName, projectName, schoolGrade
+            SELECT email, projectName, schoolGrade
             FROM upt.students
             JOIN upt.accounts ON idStud = id
             WHERE coordinator = ?;
@@ -89,8 +92,7 @@ public class CoordStudentsHandler {
 
     private static CoordStudentData getStudentDetails(ResultSet rs) throws SQLException {
         CoordStudentData student = new CoordStudentData();
-        student.firstName = rs.getString("firstName");
-        student.lastname = rs.getString("lastName");
+        student.email = rs.getString("email");
         student.projectName = rs.getString("projectName");
         student.schoolGrade = rs.getFloat("schoolGrade");
         return student;

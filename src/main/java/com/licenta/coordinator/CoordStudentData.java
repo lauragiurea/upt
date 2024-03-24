@@ -4,11 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CoordStudentData {
 
-    @JsonProperty("firstName")
-    public String firstName;
-
-    @JsonProperty("lastname")
-    public String lastname;
+    @JsonProperty("email")
+    public String email;
 
     @JsonProperty("projectName")
     public String projectName;
