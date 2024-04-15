@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.Properties;
 
 public class DbConnectionHandler {
-    private static final String connectionUrl = "jdbc:mysql://localhost:3306/upt";
+    private static final String connectionUrl = "jdbc:mysql://localhost:3306/upt?useLegacyDatetimeCode=false&serverTimezone=Europe/Bucharest";
     private static final String username = "root";
     private static final String password = "UPTlicenta";
 
