@@ -49,8 +49,8 @@ public class HelloResource {
 //
 //        return newFile.getAbsolutePath();
 
-        return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM)
-                .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"" ) //optional
+        return Response.ok(newFile, MediaType.APPLICATION_OCTET_STREAM)
+                .header("Content-Disposition", "attachment; filename=\"" + newFile.getName() + "\"" ) //optional
                 .build();
     }
 

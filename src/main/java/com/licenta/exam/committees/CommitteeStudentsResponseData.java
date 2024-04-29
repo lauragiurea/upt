@@ -5,25 +5,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommitteeStudentsData {
-
-    @JsonProperty("committeeId")
-    private final int committeeId;
-
+public class CommitteeStudentsResponseData {
     @JsonProperty("count")
     private final int count;
 
     @JsonProperty("students")
-    private final List<ExamStudentData> students;
+    private final List<CommitteeStudentData> students;
 
-    public CommitteeStudentsData() {
-        this.committeeId = 0;
+    public CommitteeStudentsResponseData() {
         this.students = new ArrayList<>();
         this.count = 0;
     }
 
-    public CommitteeStudentsData(List<ExamStudentData> students, int committeeId) {
-        this.committeeId = committeeId;
+    public CommitteeStudentsResponseData(List<CommitteeStudentData> students) {
         this.students = students;
         this.count = students.size();
     }

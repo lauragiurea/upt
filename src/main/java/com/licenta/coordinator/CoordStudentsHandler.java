@@ -1,8 +1,6 @@
 package com.licenta.coordinator;
 
 import com.licenta.db.DbConnectionHandler;
-import com.licenta.exam.committees.CommitteeStudentsData;
-import com.licenta.exam.committees.ExamStudentData;
 import com.licenta.session.Session;
 
 import java.sql.Connection;

@@ -1,6 +1,8 @@
 package com.licenta.exam.committees;
 
 import com.licenta.db.DbConnectionHandler;
+import com.licenta.exam.grading.ExamGradeResponseData;
+import com.licenta.exam.grading.ExamGradeStatus;
 import com.licenta.session.Session;
 
 import java.sql.Connection;
@@ -12,7 +14,7 @@ import java.util.List;
 
 public class CommitteesHandler {
 
-    public static CommitteeStudentsData getCommitteeStudents(Session session) {
+    public static ExamStudentsResponseData getCommitteeStudents(Session session) {
         int committeeId = getCommitteeId(session);
         return getCommitteeStudents(committeeId);
     }
@@ -23,7 +25,7 @@ public class CommitteesHandler {
             JOIN upt.accounts ON id = idStud
             WHERE committeeId = ?;
             """;
-    public static CommitteeStudentsData getCommitteeStudents(int committeeId) {
+    public static ExamStudentsResponseData getCommitteeStudents(int committeeId) {
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_COMMITTEE_STUDENTS);
             statement.setInt(1, committeeId);
@@ -33,9 +35,9 @@ public class CommitteesHandler {
                 students.add(getStudentDetails(rs));
             }
             connection.close();
-            return new CommitteeStudentsData(students, committeeId);
+            return new ExamStudentsResponseData(students, committeeId);
         } catch (Exception e) {
-            return new CommitteeStudentsData();
+            return new ExamStudentsResponseData();
         }
     }
 
@@ -73,5 +75,4 @@ public class CommitteesHandler {
             return 0;
         }
     }
-
 }
