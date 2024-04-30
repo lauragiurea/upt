@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.licenta.committees.CommitteeData;
 import com.licenta.exam.committees.CommitteeStudentsResponseData;
 import com.licenta.exam.committees.CommitteesGenerator;
 import com.licenta.exam.committees.ExamStudentsResponseData;
@@ -68,5 +69,13 @@ public class ExamRequestHandler {
     public String changeCommittee(@PathParam("idStud") int idStud, @PathParam("committeeId") int committeeId) throws Exception {
         CommitteesGenerator.changeCommittee(idStud, committeeId);
         return "";
+    }
+
+    @GET
+    @Path("student/{sessionId}/getCommittee")
+    @Produces(MediaType.APPLICATION_JSON)
+    public CommitteeData getStudentCommittee(@PathParam("sessionId") int sessionId) throws Exception {
+        Session session = SessionHandler.getSessionById(sessionId);
+        return CommitteesHandler.getStudentCommittee(session);
     }
 }

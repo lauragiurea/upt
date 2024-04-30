@@ -1,5 +1,7 @@
 package com.licenta.exam.committees;
 
+import com.licenta.committees.CommitteeData;
+import com.licenta.committees.CommitteeMembersHandler;
 import com.licenta.db.DbConnectionHandler;
 import com.licenta.exam.grading.ExamGradeResponseData;
 import com.licenta.exam.grading.ExamGradeStatus;
@@ -74,5 +76,30 @@ public class CommitteesHandler {
         } catch (Exception e) {
             return 0;
         }
+    }
+
+    private static final String SQL_GET_STUDENT_COMMITTEE = """
+            SELECT committeeId FROM upt.committeeStudents
+            where idStud = ?;
+            """;
+    private static int getStudentCommitteeId(int idStud) {
+        try (Connection connection = DbConnectionHandler.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SQL_GET_STUDENT_COMMITTEE);
+            statement.setInt(1, idStud);
+            ResultSet rs = statement.executeQuery();
+            int id = 0;
+            while (rs.next()) {
+                id = rs.getInt("committeeId");
+            }
+            connection.close();
+            return id;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public static CommitteeData getStudentCommittee(Session session) {
+        int committeeId = getStudentCommitteeId(session.getUserId());
+        return CommitteeMembersHandler.getCommittee(committeeId);
     }
 }

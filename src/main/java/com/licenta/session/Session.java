@@ -15,9 +15,11 @@ public class Session {
         this.sessionId = sessionId;
         this.userId = userId;
         this.email = email;
-        if (this.email.contains("student")) {
+        if (this.email == null || this.email.isBlank()) {
+            this.role = AccountRole.NONE;
+        } else if (this.email.contains("student")) {
             this.role = AccountRole.STUDENT;
-        } else if (email.contains("secretariat")) {
+        } else if (this.email.contains("secretariat")) {
             this.role = AccountRole.SECRETARY;
         } else {
             this.role = AccountRole.PROFESSOR;

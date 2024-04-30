@@ -84,17 +84,20 @@ public class SessionHandler {
     public static SessionNewResponseData generateNewSession(SessionNewRequestData data) throws Exception {
         // !!!!!
         if ("tg".equals(data.email) && "parola".equals(data.password)) {
-            return new SessionNewResponseData(1, "");
+            return new SessionNewResponseData(1, "", "");
         }
         // !!!!!
         int userId = getAccountId(data.email, data.password);
         if (userId != 0) {
             int sessionId = addNewSession(userId);
             if (sessionId != 0) {
-                Session session = new Session(sessionId, userId, data.email);
+                Session session = getSessionFromDB(sessionId);
+                if (session == null) {
+                    throw new Exception("Session could not be created");
+                }
                 sessionsCache.putIfAbsent(sessionId, session);
                 usersByEmail.putIfAbsent(data.email, userId);
-                return new SessionNewResponseData(sessionId, session.getRole().toString());
+                return new SessionNewResponseData(sessionId, session.getRole().toString(), session.getFirstName());
             } else {
                 throw new Exception("Session could not be created");
             }
