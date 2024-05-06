@@ -29,6 +29,7 @@ public class CommitteesHandler {
             JOIN upt.accounts ON id = idStud
             WHERE committeeId = ?;
             """;
+
     public static ExamStudentsResponseData getCommitteeStudents(int committeeId) {
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_COMMITTEE_STUDENTS);
@@ -62,6 +63,7 @@ public class CommitteesHandler {
             JOIN upt.committeeSecretaries s USING (committeeId)
             where m.idProf = ? || p.idProf = ? || s.idProf = ?;
             """;
+
     public static int getCommitteeId(int userId) {
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_COMMITTE_ID);
@@ -84,6 +86,7 @@ public class CommitteesHandler {
             SELECT committeeId FROM upt.committeeStudents
             where idStud = ?;
             """;
+
     private static int getStudentCommitteeId(int idStud) {
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_STUDENT_COMMITTEE);
@@ -115,22 +118,23 @@ public class CommitteesHandler {
             a.lastName as lastName,
             s.projectName as projectName,
             cs.committeeId as committeeId,
-            eg.mean as examGrade,
+            eg.examGrade as examGrade,
             cg.grade as coordGrade,
             s.schoolGrade as schoolGrade
             FROM upt.students s
             JOIN upt.accounts a ON a.id = s.idStud
             JOIN upt.committeeStudents cs USING (idStud)
-            JOIN upt.examGrades eg USING (idStud)
-            JOIN upt.coordinatorGrades cg USING (idStud);
+            JOIN upt.coordinatorGrades cg USING (idStud)
+            JOIN (SELECT idStud, avg(mean) as examGrade FROM upt.examGrades GROUP BY idStud) eg USING (idStud);
             """;
+
     public static AllStudentsStatsResponseData getAllStudentsStats() {
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_ALL_STUDENTS_STATS);
             ResultSet rs = statement.executeQuery();
             List<StudentStats> studentStats = new ArrayList<>();
             while (rs.next()) {
-                studentStats.add(getStudentStats(rs));
+                studentStats.add(getStudentStats(rs, connection));
             }
             connection.close();
             return new AllStudentsStatsResponseData(studentStats);
@@ -139,7 +143,7 @@ public class CommitteesHandler {
         }
     }
 
-    private static StudentStats getStudentStats(ResultSet rs) throws SQLException {
+    private static StudentStats getStudentStats(ResultSet rs, Connection connection) throws SQLException {
         StudentStats stats = new StudentStats();
         stats.studName = rs.getString("lastName") + " " + rs.getString("firstName");
         stats.projectName = rs.getString("projectName");

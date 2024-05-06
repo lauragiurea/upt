@@ -12,6 +12,7 @@ import com.licenta.exam.committees.CommitteesHandler;
 import com.licenta.exam.grading.ExamGradingHandler;
 import com.licenta.exam.grading.ExamGradeRequestData;
 import com.licenta.exam.grading.ExamGradeResponseData;
+import com.licenta.exam.grading.OtherGradesResponseData;
 import com.licenta.exam.stats.AllStudentsStatsResponseData;
 import com.licenta.session.Session;
 import com.licenta.session.SessionHandler;
@@ -93,5 +94,12 @@ public class ExamRequestHandler {
     @Produces(MediaType.APPLICATION_JSON)
     public AllStudentsStatsResponseData getAllStudentsStats() {
         return CommitteesHandler.getAllStudentsStats();
+    }
+
+    @GET
+    @Path("grades/seeOthers")
+    @Produces(MediaType.APPLICATION_JSON)
+    public OtherGradesResponseData getOtherGrades() {
+        return ExamGradingHandler.getOtherGrades();
     }
 }

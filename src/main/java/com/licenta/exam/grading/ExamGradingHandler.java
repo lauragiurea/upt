@@ -6,6 +6,9 @@ import com.licenta.session.Session;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExamGradingHandler {
 
@@ -58,5 +61,39 @@ public class ExamGradingHandler {
         } catch (Exception e) {
             return ExamGradeStatus.PENDING;
         }
+    }
+
+    private static final String SQL_GET_OTHER_GRADES = """
+            SELECT a.lastName as profLastName, a.firstName as profFirstName,
+            studLastName, studFirstName, projectGrade, knowledgeGrade
+            FROM
+            (SELECT idProf, a.lastName as studLastName, a.firstName as studFirstName,
+            eg.projectGrade as projectGrade, eg.knowledgeGrade as knowledgeGrade
+            FROM upt.examGrades eg
+            JOIN upt.accounts a ON a.id = eg.idStud) students
+            JOIN upt.accounts a ON students.idProf = a.id;
+            """;
+    public static OtherGradesResponseData getOtherGrades() {
+        try (Connection connection = DbConnectionHandler.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SQL_GET_OTHER_GRADES);
+            ResultSet rs = statement.executeQuery();
+            List<ExamGrade> grades = new ArrayList<>();
+            while (rs.next()) {
+                grades.add(getGrade(rs));
+            }
+            connection.close();
+            return new OtherGradesResponseData(grades);
+        } catch (Exception e) {
+            return new OtherGradesResponseData();
+        }
+    }
+
+    private static ExamGrade getGrade(ResultSet rs) throws SQLException {
+        ExamGrade grade = new ExamGrade();
+        grade.studName = rs.getString("studLastName") + " " + rs.getString("studFirstName");
+        grade.profName = rs.getString("profLastName") + " " + rs.getString("profFirstName");
+        grade.projectGrade = rs.getFloat("projectGrade");
+        grade.knowledgeGrade = rs.getFloat("knowledgeGrade");
+        return grade;
     }
 }
