@@ -12,6 +12,7 @@ import com.licenta.exam.committees.CommitteesHandler;
 import com.licenta.exam.grading.ExamGradingHandler;
 import com.licenta.exam.grading.ExamGradeRequestData;
 import com.licenta.exam.grading.ExamGradeResponseData;
+import com.licenta.exam.stats.AllStudentsStatsResponseData;
 import com.licenta.session.Session;
 import com.licenta.session.SessionHandler;
 
@@ -77,5 +78,20 @@ public class ExamRequestHandler {
     public CommitteeData getStudentCommittee(@PathParam("sessionId") int sessionId) throws Exception {
         Session session = SessionHandler.getSessionById(sessionId);
         return CommitteesHandler.getStudentCommittee(session);
+    }
+
+    @GET
+    @Path("prof/{sessionId}/getCommittee")
+    @Produces(MediaType.APPLICATION_JSON)
+    public CommitteeData getProfCommittee(@PathParam("sessionId") int sessionId) throws Exception {
+        Session session = SessionHandler.getSessionById(sessionId);
+        return CommitteesHandler.getProfCommittee(session);
+    }
+
+    @GET
+    @Path("stats/allStudents")
+    @Produces(MediaType.APPLICATION_JSON)
+    public AllStudentsStatsResponseData getAllStudentsStats() {
+        return CommitteesHandler.getAllStudentsStats();
     }
 }

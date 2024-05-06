@@ -5,6 +5,8 @@ import com.licenta.committees.CommitteeMembersHandler;
 import com.licenta.db.DbConnectionHandler;
 import com.licenta.exam.grading.ExamGradeResponseData;
 import com.licenta.exam.grading.ExamGradeStatus;
+import com.licenta.exam.stats.AllStudentsStatsResponseData;
+import com.licenta.exam.stats.StudentStats;
 import com.licenta.session.Session;
 
 import java.sql.Connection;
@@ -17,7 +19,7 @@ import java.util.List;
 public class CommitteesHandler {
 
     public static ExamStudentsResponseData getCommitteeStudents(Session session) {
-        int committeeId = getCommitteeId(session);
+        int committeeId = getCommitteeId(session.getUserId());
         return getCommitteeStudents(committeeId);
     }
 
@@ -60,12 +62,12 @@ public class CommitteesHandler {
             JOIN upt.committeeSecretaries s USING (committeeId)
             where m.idProf = ? || p.idProf = ? || s.idProf = ?;
             """;
-    public static int getCommitteeId(Session session) {
+    public static int getCommitteeId(int userId) {
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_COMMITTE_ID);
-            statement.setInt(1, session.getUserId());
-            statement.setInt(2, session.getUserId());
-            statement.setInt(3, session.getUserId());
+            statement.setInt(1, userId);
+            statement.setInt(2, userId);
+            statement.setInt(3, userId);
             ResultSet rs = statement.executeQuery();
             int id = 0;
             while (rs.next()) {
@@ -101,5 +103,50 @@ public class CommitteesHandler {
     public static CommitteeData getStudentCommittee(Session session) {
         int committeeId = getStudentCommitteeId(session.getUserId());
         return CommitteeMembersHandler.getCommittee(committeeId);
+    }
+
+    public static CommitteeData getProfCommittee(Session session) {
+        int committeeId = getCommitteeId(session.getUserId());
+        return CommitteeMembersHandler.getCommittee(committeeId);
+    }
+
+    private static final String SQL_GET_ALL_STUDENTS_STATS = """
+            SELECT a.firstName as firstName,
+            a.lastName as lastName,
+            s.projectName as projectName,
+            cs.committeeId as committeeId,
+            eg.mean as examGrade,
+            cg.grade as coordGrade,
+            s.schoolGrade as schoolGrade
+            FROM upt.students s
+            JOIN upt.accounts a ON a.id = s.idStud
+            JOIN upt.committeeStudents cs USING (idStud)
+            JOIN upt.examGrades eg USING (idStud)
+            JOIN upt.coordinatorGrades cg USING (idStud);
+            """;
+    public static AllStudentsStatsResponseData getAllStudentsStats() {
+        try (Connection connection = DbConnectionHandler.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SQL_GET_ALL_STUDENTS_STATS);
+            ResultSet rs = statement.executeQuery();
+            List<StudentStats> studentStats = new ArrayList<>();
+            while (rs.next()) {
+                studentStats.add(getStudentStats(rs));
+            }
+            connection.close();
+            return new AllStudentsStatsResponseData(studentStats);
+        } catch (Exception e) {
+            return new AllStudentsStatsResponseData();
+        }
+    }
+
+    private static StudentStats getStudentStats(ResultSet rs) throws SQLException {
+        StudentStats stats = new StudentStats();
+        stats.studName = rs.getString("lastName") + " " + rs.getString("firstName");
+        stats.projectName = rs.getString("projectName");
+        stats.committeeId = rs.getInt("committeeId");
+        stats.examGrade = rs.getFloat("examGrade");
+        stats.schoolGrade = rs.getFloat("schoolGrade");
+        stats.coordGrade = rs.getFloat("coordGrade");
+        return stats;
     }
 }
