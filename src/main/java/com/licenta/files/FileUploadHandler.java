@@ -1,5 +1,8 @@
 package com.licenta.files;
 
+import com.licenta.session.Session;
+import com.licenta.session.SessionHandler;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -13,30 +16,14 @@ import java.nio.file.StandardCopyOption;
 public class FileUploadHandler {
 
     @POST
-    public Response handleAddStudent(byte[] fileBytes) throws Exception {
-        File file = new File("file.pdf");
-        try (FileOutputStream stream = new FileOutputStream("file.pdf")) {
+    @Path("{sessionId}/{fileName}")
+    public String handleUpload(@PathParam("sessionId") int sessionId, @PathParam("fileName") String fileName, byte[] fileBytes) throws Exception {
+        Session session = SessionHandler.getSessionById(sessionId);
+        new File("files/" + session.getUserId()).mkdirs();
+        try (FileOutputStream stream = new FileOutputStream("files/" + session.getUserId() + "/" + fileName)) {
             stream.write(fileBytes);
             stream.close();
         }
-        return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM)
-        .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"" ) //optional
-        .build();
+        return "";
     }
-
-//    @POST
-//    @Consumes(MediaType.MULTIPART_FORM_DATA)
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response handleAddStudent(@FormDataParam("file") InputStream uploadedInputStream) throws Exception {
-//        File file = new File("file.pdf");
-//        Files.copy(uploadedInputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-////        try (FileOutputStream stream = new FileOutputStream("file.pdf")) {
-////            stream.write(fileBytes);
-////            Files.copy(uploadedInputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-////            stream.close();
-////        }
-//        return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM)
-//                .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"" ) //optional
-//                .build();
-//    }
 }

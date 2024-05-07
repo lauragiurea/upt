@@ -12,4 +12,7 @@ public class CoordStudentData {
 
     @JsonProperty("schoolGrade")
     public float schoolGrade;
+
+    @JsonProperty("grade")
+    public float grade;
 }

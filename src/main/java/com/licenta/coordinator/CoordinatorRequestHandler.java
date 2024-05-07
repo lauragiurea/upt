@@ -42,7 +42,8 @@ public class CoordinatorRequestHandler {
     @Produces(MediaType.TEXT_PLAIN)
     public String handleGrading(@PathParam("sessionId") int sessionId, CoordGradeRequestData data) throws Exception {
         Session session = SessionHandler.getSessionById(sessionId);
-        CoordStudentsHandler.addGrade(session, data);
+        int studentId = SessionHandler.getUserByEmail(data.email);
+        CoordStudentsHandler.addGrade(session, studentId, data.grade);
         return "";
     }
 }

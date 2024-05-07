@@ -2,6 +2,7 @@ package com.licenta.coordinator;
 
 import com.licenta.db.DbConnectionHandler;
 import com.licenta.session.Session;
+import com.licenta.session.SessionHandler;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -53,12 +54,12 @@ public class CoordStudentsHandler {
             INSERT INTO upt.coordinatorGrades (idProf, idStud, grade)
             VALUES (?,?,?);
             """;
-    public static void addGrade(Session session, CoordGradeRequestData data) {
+    public static void addGrade(Session session, int studentId, float grade) {
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_ADD_GRADE);
             statement.setInt(1, session.getUserId());
-            statement.setInt(2, data.studentId);
-            statement.setFloat(3, data.grade);
+            statement.setInt(2, studentId);
+            statement.setFloat(3, grade);
             statement.execute();
             connection.close();
         } catch (Exception e) {
@@ -67,9 +68,11 @@ public class CoordStudentsHandler {
     }
 
     private static final String SQL_GET_COORD_STUDENTS = """
-            SELECT email, projectName, schoolGrade
-            FROM upt.students
-            JOIN upt.accounts ON idStud = id
+            SELECT a.email as email, s.projectName as projectName,
+            s.schoolGrade as schoolGrade, cg.grade as grade
+            FROM upt.students s
+            JOIN upt.accounts a ON s.idStud = a.id
+            LEFT JOIN upt.coordinatorGrades cg ON cg.idStud = s.idStud
             WHERE coordinator = ?;
             """;
     public static CoordStudentsData getStudents(Session session) {
@@ -93,6 +96,7 @@ public class CoordStudentsHandler {
         student.email = rs.getString("email");
         student.projectName = rs.getString("projectName");
         student.schoolGrade = rs.getFloat("schoolGrade");
+        student.grade = rs.getFloat("grade");
         return student;
     }
 }

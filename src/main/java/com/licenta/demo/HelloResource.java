@@ -30,28 +30,15 @@ public class HelloResource {
 
     @GET
     @Path("file")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-//    @Produces(MediaType.TEXT_PLAIN)
+    @Produces("application/pdf")
     public Response getFile() throws URISyntaxException, IOException {
-//        public String getFile() throws URISyntaxException, IOException {
 
-        File file = new File("/Users/lauragiurea/Desktop/LICENTA/lcenta/src/main/res/Giurea_Laura_proiect.pdf");
-        byte[] bytes = Files.readAllBytes(file.toPath());
-        File newFile = new File("file.pdf");
-        try (FileOutputStream stream = new FileOutputStream("file.pdf")) {
-            stream.write(bytes);
-        }
+        File file = new File("/Users/lauragiurea/Desktop/Giurea_Laura_proiect.pdf");
 
-//        URL folderURL = this.getClass().getClassLoader().getResource("files");
-//        File newFile = new File(folderURL.toURI().getPath() + "/file.pdf");
-//
-//        Files.copy(file.toPath(), newFile.toPath());
-//
-//        return newFile.getAbsolutePath();
-
-        return Response.ok(newFile, MediaType.APPLICATION_OCTET_STREAM)
-                .header("Content-Disposition", "attachment; filename=\"" + newFile.getName() + "\"" ) //optional
-                .build();
+        Response.ResponseBuilder response = Response.ok((Object) file);
+        response.header("Content-Disposition", "attachment; filename=file.pdf");
+        response.type("application/pdf");
+        return response.build();
     }
 
 }
