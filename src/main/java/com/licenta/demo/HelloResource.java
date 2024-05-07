@@ -31,8 +31,7 @@ public class HelloResource {
     @GET
     @Path("file")
     @Produces("application/pdf")
-    public Response getFile() throws URISyntaxException, IOException {
-
+    public Response getFile() {
         File file = new File("/Users/lauragiurea/Desktop/Giurea_Laura_proiect.pdf");
 
         Response.ResponseBuilder response = Response.ok((Object) file);
