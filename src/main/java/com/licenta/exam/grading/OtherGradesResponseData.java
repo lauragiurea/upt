@@ -7,19 +7,19 @@ import java.util.List;
 
 public class OtherGradesResponseData {
 
-    @JsonProperty("count")
-    public int count;
+    @JsonProperty("professors")
+    public List<String> professors;
 
-    @JsonProperty("grades")
-    public List<ExamGrade> grades;
+    @JsonProperty("students")
+    public List<StudentGradesData> grades;
 
     public OtherGradesResponseData() {
-        this.count = 0;
         this.grades = new ArrayList<>();
+        this.professors = new ArrayList<>();
     }
 
-    public OtherGradesResponseData(List<ExamGrade> grades) {
-        this.count = grades.size();
+    public OtherGradesResponseData(List<StudentGradesData> grades, List<String> professors) {
         this.grades = grades;
+        this.professors = professors;
     }
 }

@@ -1,6 +1,9 @@
 package com.licenta.exam.grading;
 
+import com.licenta.committees.CommitteeData;
+import com.licenta.committees.CommitteeMembersHandler;
 import com.licenta.db.DbConnectionHandler;
+import com.licenta.exam.committees.CommitteesHandler;
 import com.licenta.session.Session;
 
 import java.sql.Connection;
@@ -8,7 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class ExamGradingHandler {
 
@@ -67,22 +72,41 @@ public class ExamGradingHandler {
             SELECT a.lastName as profLastName, a.firstName as profFirstName,
             studLastName, studFirstName, projectGrade, knowledgeGrade
             FROM
-            (SELECT idProf, a.lastName as studLastName, a.firstName as studFirstName,
+            (SELECT idStud, idProf, a.lastName as studLastName, a.firstName as studFirstName,
             eg.projectGrade as projectGrade, eg.knowledgeGrade as knowledgeGrade
             FROM upt.examGrades eg
             JOIN upt.accounts a ON a.id = eg.idStud) students
-            JOIN upt.accounts a ON students.idProf = a.id;
+            JOIN upt.accounts a ON students.idProf = a.id
+            JOIN upt.committeeStudents cs ON students.idStud = cs.idStud
+            WHERE committeeId = ?;
             """;
-    public static OtherGradesResponseData getOtherGrades() {
+    public static OtherGradesResponseData getOtherGrades(int userId) {
+        int committeeId = CommitteesHandler.getCommitteeId(userId);
+        CommitteeData committeeData = CommitteeMembersHandler.getCommittee(committeeId);
+        List<String> professors = Stream.concat(committeeData.members.stream(), Stream.of(committeeData.president)).sorted().toList();
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_OTHER_GRADES);
+            statement.setInt(1, committeeId);
             ResultSet rs = statement.executeQuery();
-            List<ExamGrade> grades = new ArrayList<>();
+            List<StudentGradesData> grades = new ArrayList<>();
             while (rs.next()) {
-                grades.add(getGrade(rs));
+                StudentGradesData gradesData = new StudentGradesData();
+                gradesData.studName = rs.getString("studLastName") + " " + rs.getString("studFirstName");
+                gradesData.grades = new ArrayList<>();
+                if (grades.contains(gradesData)) {
+                    for(StudentGradesData data : grades) {
+                        if (data.equals(gradesData)) {
+                            data.grades.add(getGrade(rs));
+                            data.grades.sort(Comparator.comparing(a -> a.profName));
+                        }
+                    }
+                } else {
+                    gradesData.grades.add(getGrade(rs));
+                    grades.add(gradesData);
+                }
             }
             connection.close();
-            return new OtherGradesResponseData(grades);
+            return new OtherGradesResponseData(grades, professors);
         } catch (Exception e) {
             return new OtherGradesResponseData();
         }
@@ -90,7 +114,6 @@ public class ExamGradingHandler {
 
     private static ExamGrade getGrade(ResultSet rs) throws SQLException {
         ExamGrade grade = new ExamGrade();
-        grade.studName = rs.getString("studLastName") + " " + rs.getString("studFirstName");
         grade.profName = rs.getString("profLastName") + " " + rs.getString("profFirstName");
         grade.projectGrade = rs.getFloat("projectGrade");
         grade.knowledgeGrade = rs.getFloat("knowledgeGrade");

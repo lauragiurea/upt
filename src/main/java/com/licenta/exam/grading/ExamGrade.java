@@ -6,9 +6,6 @@ public class ExamGrade {
     @JsonProperty("profName")
     public String profName;
 
-    @JsonProperty("studName")
-    public String studName;
-
     @JsonProperty("projectGrade")
     public float projectGrade;
 

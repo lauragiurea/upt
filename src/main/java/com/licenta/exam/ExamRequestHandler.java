@@ -97,9 +97,10 @@ public class ExamRequestHandler {
     }
 
     @GET
-    @Path("grades/seeOthers")
+    @Path("{sessionId}/otherGrades")
     @Produces(MediaType.APPLICATION_JSON)
-    public OtherGradesResponseData getOtherGrades() {
-        return ExamGradingHandler.getOtherGrades();
+    public OtherGradesResponseData getOtherGrades(@PathParam("sessionId") int sessionId) throws Exception {
+        int userId = SessionHandler.getSessionById(sessionId).getUserId();
+        return ExamGradingHandler.getOtherGrades(userId);
     }
 }
