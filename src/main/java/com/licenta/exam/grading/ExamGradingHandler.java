@@ -67,7 +67,7 @@ public class ExamGradingHandler {
     }
 
     private static final String SQL_GET_OTHER_GRADES = """
-            SELECT a.lastName as profLastName, a.firstName as profFirstName,
+            SELECT students.idStud, a.lastName as profLastName, a.firstName as profFirstName,
             studLastName, studFirstName, projectGrade, knowledgeGrade
             FROM
             (SELECT idStud, idProf, a.lastName as studLastName, a.firstName as studFirstName,
@@ -79,6 +79,7 @@ public class ExamGradingHandler {
             WHERE committeeId = ?;
             """;
     public static OtherGradesResponseData getOtherGrades(int userId) {
+        OtherGradesResponseData response = new OtherGradesResponseData();
         int committeeId = CommitteesHandler.getCommitteeId(userId);
         CommitteeData committeeData = CommitteeMembersHandler.getCommittee(committeeId);
         List<String> professors = Stream.concat(committeeData.members.stream(), Stream.of(committeeData.president)).sorted().toList();
@@ -89,6 +90,7 @@ public class ExamGradingHandler {
             List<StudentGradesData> students = new ArrayList<>();
             while (rs.next()) {
                 StudentGradesData gradesData = new StudentGradesData();
+                gradesData.idStud = rs.getInt("idStud");
                 gradesData.studName = rs.getString("studLastName") + " " + rs.getString("studFirstName");
                 gradesData.grades = new ArrayList<>();
                 if (students.contains(gradesData)) {
@@ -118,10 +120,12 @@ public class ExamGradingHandler {
                 data.grades.sort(Comparator.comparing(a -> a.profName));
             }
             connection.close();
-            return new OtherGradesResponseData(students, professors);
+            response = new OtherGradesResponseData(students, professors);
         } catch (Exception e) {
             return new OtherGradesResponseData();
         }
+        response.grades.forEach(grade -> grade.status = checkGrade(grade.idStud, grade.getMean()).toString());
+        return response;
     }
 
     private static ExamGrade getGrade(ResultSet rs) throws SQLException {

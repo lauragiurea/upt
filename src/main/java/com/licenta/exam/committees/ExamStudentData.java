@@ -13,6 +13,12 @@ public class ExamStudentData {
     @JsonProperty("firstName")
     public String firstName;
 
+    @JsonProperty("coordName")
+    public String coordName;
+
+    @JsonProperty("coordGrade")
+    public float coordGrade;
+
     @JsonProperty("projectName")
     public String projectName;
 

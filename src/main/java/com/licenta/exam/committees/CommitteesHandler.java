@@ -26,10 +26,15 @@ public class CommitteesHandler {
 
     private static final String SQL_GET_COMMITTEE_STUDENTS = """
             SELECT * FROM
-            (SELECT idStud, lastname, firstName, projectname, hour, schoolGrade FROM upt.committeeStudents
+            (SELECT idStud, lastname, firstName, projectname, hour, schoolGrade, coordinator
+            FROM upt.committeeStudents
             JOIN upt.students USING (idStud)
             JOIN upt.accounts ON id = idStud
             WHERE committeeId = ?) students
+            JOIN
+            (SELECT id, firstName as coordFirstName, lastName as coordLastName
+            FROM upt.accounts) coordinators ON students.coordinator = coordinators.id
+            LEFT JOIN upt.coordinatorGrades USING (idStud)
             LEFT JOIN
             (SELECT idStud, mean FROM upt.examGrades
             WHERE idProf = ?) grades USING (idStud)
@@ -65,6 +70,8 @@ public class CommitteesHandler {
         student.lastName = rs.getString("lastName");
         student.firstName = rs.getString("firstName");
         student.projectName = rs.getString("projectName");
+        student.coordName = rs.getString("coordLastName") + " " + rs.getString("coordFirstName");
+        student.coordGrade = rs.getFloat("grade");
         student.hour = rs.getString("hour");
         student.schoolGrade = rs.getFloat("schoolGrade");
         student.examGrade = new ExamGradeResponseData();
