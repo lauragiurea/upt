@@ -5,6 +5,7 @@ import com.licenta.committees.CommitteeMembersHandler;
 import com.licenta.db.DbConnectionHandler;
 import com.licenta.exam.grading.ExamGradeResponseData;
 import com.licenta.exam.grading.ExamGradeStatus;
+import com.licenta.exam.grading.ExamGradingHandler;
 import com.licenta.exam.stats.AllStudentsStatsResponseData;
 import com.licenta.exam.stats.StudentStats;
 import com.licenta.session.Session;
@@ -20,30 +21,42 @@ public class CommitteesHandler {
 
     public static ExamStudentsResponseData getCommitteeStudents(Session session) {
         int committeeId = getCommitteeId(session.getUserId());
-        return getCommitteeStudents(committeeId);
+        return getCommitteeStudents(committeeId, session.getUserId());
     }
 
     private static final String SQL_GET_COMMITTEE_STUDENTS = """
-            SELECT idStud, lastname, firstName, projectname, hour, schoolGrade FROM upt.committeeStudents
+            SELECT * FROM
+            (SELECT idStud, lastname, firstName, projectname, hour, schoolGrade FROM upt.committeeStudents
             JOIN upt.students USING (idStud)
             JOIN upt.accounts ON id = idStud
-            WHERE committeeId = ?;
+            WHERE committeeId = ?) students
+            LEFT JOIN
+            (SELECT idStud, mean FROM upt.examGrades
+            WHERE idProf = ?) grades USING (idStud)
+            ;
             """;
 
-    public static ExamStudentsResponseData getCommitteeStudents(int committeeId) {
+    private static ExamStudentsResponseData getCommitteeStudents(int committeeId, int userId) {
+        List<ExamStudentData> students = new ArrayList<>();
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_COMMITTEE_STUDENTS);
             statement.setInt(1, committeeId);
+            statement.setInt(2, userId);
             ResultSet rs = statement.executeQuery();
-            List<ExamStudentData> students = new ArrayList<>();
             while (rs.next()) {
                 students.add(getStudentDetails(rs));
             }
             connection.close();
-            return new ExamStudentsResponseData(students, committeeId);
         } catch (Exception e) {
             return new ExamStudentsResponseData();
         }
+        students.forEach(student -> student.examGrade.status = checkGrade(student.examGrade.mean, student.schoolGrade).toString());
+        return new ExamStudentsResponseData(students, committeeId);
+    }
+
+    private static ExamGradeStatus checkGrade(float grade, float schoolGrade) {
+        return schoolGrade == 0 || grade == 0 ? ExamGradeStatus.PENDING :
+                Math.abs(schoolGrade - grade) <= 2 ? ExamGradeStatus.OK : ExamGradeStatus.NOK;
     }
 
     private static ExamStudentData getStudentDetails(ResultSet rs) throws SQLException {
@@ -54,6 +67,8 @@ public class CommitteesHandler {
         student.projectName = rs.getString("projectName");
         student.hour = rs.getString("hour");
         student.schoolGrade = rs.getFloat("schoolGrade");
+        student.examGrade = new ExamGradeResponseData();
+        student.examGrade.mean = rs.getFloat("mean");
         return student;
     }
 

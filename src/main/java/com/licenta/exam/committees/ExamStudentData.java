@@ -1,6 +1,7 @@
 package com.licenta.exam.committees;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.licenta.exam.grading.ExamGradeResponseData;
 
 public class ExamStudentData {
     @JsonProperty("userId")
@@ -20,4 +21,7 @@ public class ExamStudentData {
 
     @JsonProperty("schoolGrade")
     public Float schoolGrade;
+
+    @JsonProperty("examGrade")
+    public ExamGradeResponseData examGrade;
 }

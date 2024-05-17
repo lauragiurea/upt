@@ -31,13 +31,6 @@ public class ExamRequestHandler {
         return CommitteesHandler.getCommitteeStudents(session);
     }
 
-    @GET
-    @Path("committeeStudents/{committeeId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public ExamStudentsResponseData getCommitteeStudents(@PathParam("committeeId") int committeeId) {
-        return CommitteesHandler.getCommitteeStudents(committeeId);
-    }
-
     @POST
     @Path("{sessionId}/grade")
     @Produces(MediaType.APPLICATION_JSON)

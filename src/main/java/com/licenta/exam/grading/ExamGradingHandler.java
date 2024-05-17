@@ -10,9 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class ExamGradingHandler {
@@ -88,13 +86,13 @@ public class ExamGradingHandler {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_OTHER_GRADES);
             statement.setInt(1, committeeId);
             ResultSet rs = statement.executeQuery();
-            List<StudentGradesData> grades = new ArrayList<>();
+            List<StudentGradesData> students = new ArrayList<>();
             while (rs.next()) {
                 StudentGradesData gradesData = new StudentGradesData();
                 gradesData.studName = rs.getString("studLastName") + " " + rs.getString("studFirstName");
                 gradesData.grades = new ArrayList<>();
-                if (grades.contains(gradesData)) {
-                    for(StudentGradesData data : grades) {
+                if (students.contains(gradesData)) {
+                    for(StudentGradesData data : students) {
                         if (data.equals(gradesData)) {
                             data.grades.add(getGrade(rs));
                             data.grades.sort(Comparator.comparing(a -> a.profName));
@@ -102,11 +100,25 @@ public class ExamGradingHandler {
                     }
                 } else {
                     gradesData.grades.add(getGrade(rs));
-                    grades.add(gradesData);
+                    students.add(gradesData);
                 }
             }
+            professors.forEach(prof -> {
+                for(StudentGradesData data : students) {
+                    if (!data.grades.stream().map(grade -> grade.profName).toList().contains(prof)) {
+                        ExamGrade grade = new ExamGrade();
+                        grade.profName = prof;
+                        grade.projectGrade = 0;
+                        grade.knowledgeGrade = 0;
+                        data.grades.add(grade);
+                    }
+                }
+            });
+            for(StudentGradesData data : students) {
+                data.grades.sort(Comparator.comparing(a -> a.profName));
+            }
             connection.close();
-            return new OtherGradesResponseData(grades, professors);
+            return new OtherGradesResponseData(students, professors);
         } catch (Exception e) {
             return new OtherGradesResponseData();
         }
