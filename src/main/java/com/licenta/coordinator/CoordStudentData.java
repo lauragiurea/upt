@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CoordStudentData {
 
+    @JsonProperty("studentId")
+    public int studentId;
+
     @JsonProperty("email")
     public String email;
 

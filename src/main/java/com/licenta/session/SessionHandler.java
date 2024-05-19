@@ -82,11 +82,6 @@ public class SessionHandler {
     }
 
     public static SessionNewResponseData generateNewSession(SessionNewRequestData data) throws Exception {
-        // !!!!!
-        if ("tg".equals(data.email) && "parola".equals(data.password)) {
-            return new SessionNewResponseData(1, "", "");
-        }
-        // !!!!!
         int userId = getAccountId(data.email, data.password);
         if (userId != 0) {
             int sessionId = addNewSession(userId);
@@ -95,9 +90,15 @@ public class SessionHandler {
                 if (session == null) {
                     throw new Exception("Session could not be created");
                 }
+                if (session.getRole() == AccountRole.PROFESSOR) {
+                    session.setIsSecretary(getIsSecretary(session.getUserId()));
+                    session.setIsCoordinator(getIsCoordinator(session.getUserId()));
+                    session.setIsCommitteeMember(getIsCommitteeMember(session.getUserId()));
+                }
                 sessionsCache.putIfAbsent(sessionId, session);
                 usersByEmail.putIfAbsent(data.email, userId);
-                return new SessionNewResponseData(sessionId, session.getRole().toString(), session.getFirstName());
+                return new SessionNewResponseData(sessionId, session.getRole().toString(), session.getFirstName(),
+                        session.isSecretary(), session.isCoordinator(), session.isCommitteeMember());
             } else {
                 throw new Exception("Session could not be created");
             }
@@ -168,6 +169,69 @@ public class SessionHandler {
             return id;
         } catch (Exception e) {
             return 0;
+        }
+    }
+
+    private static final String SQL_GET_IS_SECRETARY = """
+            SELECT COUNT(*) as count FROM upt.committeeSecretaries
+            WHERE idProf = ?;
+            """;
+    private static boolean getIsSecretary(int userId) {
+        try (Connection connection = DbConnectionHandler.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SQL_GET_IS_SECRETARY);
+            statement.setInt(1, userId);
+            ResultSet rs = statement.executeQuery();
+            int count = 0;
+            while (rs.next()) {
+                count = rs.getInt("count");
+            }
+            connection.close();
+            return count > 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static final String SQL_GET_IS_COORDINATOR = """
+            SELECT COUNT(*) as count FROM upt.students
+            WHERE coordinator = ?;
+            """;
+    private static boolean getIsCoordinator(int userId) {
+        try (Connection connection = DbConnectionHandler.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SQL_GET_IS_COORDINATOR);
+            statement.setInt(1, userId);
+            ResultSet rs = statement.executeQuery();
+            int count = 0;
+            while (rs.next()) {
+                count = rs.getInt("count");
+            }
+            connection.close();
+            return count > 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static final String SQL_GET_IS_COMMITTEE_MEMBER = """
+            SELECT COUNT(*) as count FROM
+            (SELECT * FROM upt.committeePresidents
+            UNION SELECT * FROM upt.committeeSecretaries
+            UNION SELECT * FROM upt.committeeMembers) members
+            WHERE members.idProf = ?;
+            """;
+    private static boolean getIsCommitteeMember(int userId) {
+        try (Connection connection = DbConnectionHandler.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SQL_GET_IS_COMMITTEE_MEMBER);
+            statement.setInt(1, userId);
+            ResultSet rs = statement.executeQuery();
+            int count = 0;
+            while (rs.next()) {
+                count = rs.getInt("count");
+            }
+            connection.close();
+            return count > 0;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

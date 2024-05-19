@@ -10,6 +10,9 @@ public class Session {
     private String firstName;
 
     private final AccountRole role;
+    private Boolean isSecretary;
+    private Boolean isCoordinator;
+    private Boolean isCommitteeMember;
 
     public Session(int sessionId, int userId, String email) {
         this.sessionId = sessionId;
@@ -55,5 +58,29 @@ public class Session {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public void setIsSecretary(boolean isSecretary) {
+        this.isSecretary = isSecretary;
+    }
+
+    public Boolean isSecretary() {
+        return this.isSecretary;
+    }
+
+    public void setIsCoordinator(boolean isCoordinator) {
+        this.isCoordinator = isCoordinator;
+    }
+
+    public Boolean isCoordinator() {
+        return this.isCoordinator;
+    }
+
+    public void setIsCommitteeMember(boolean isCommitteeMember) {
+        this.isCommitteeMember = isCommitteeMember;
+    }
+
+    public Boolean isCommitteeMember() {
+        return this.isCommitteeMember;
     }
 }
