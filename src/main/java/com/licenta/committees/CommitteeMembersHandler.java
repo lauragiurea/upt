@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class CommitteeMembersHandler {
@@ -84,6 +85,7 @@ public class CommitteeMembersHandler {
         data.president = getCommitteePresident(committeeId);
         data.secretary = getCommitteeSecretary(committeeId);
         data.members = getCommitteeMembers(committeeId);
+        data.members.sort(Comparator.naturalOrder());
         return data;
     }
 
@@ -165,6 +167,71 @@ public class CommitteeMembersHandler {
             return Integer.valueOf(count).toString();
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    private final static String SQL_EDIT_PRESIDENT = """
+            UPDATE upt.committeePresidents
+            SET idProf = ?
+            WHERE committeeId = ?
+            """;
+    private final static String SQL_EDIT_SECRETARY = """
+            UPDATE upt.committeeSecretaries
+            SET idProf = ?
+            WHERE committeeId = ?
+            """;
+    private final static String SQL_EDIT_MEMBER = """
+            UPDATE upt.committeeMembers
+            SET idProf = ?
+            WHERE committeeId = ? AND idProf =
+            (SELECT id FROM upt.accounts WHERE firstName = ? AND lastName = ?);
+            """;
+    public static void editCommittee(EditCommitteeRequestData data) throws Exception {
+        String sql = data.position == 1 ? SQL_EDIT_PRESIDENT : data.position == 2 ? SQL_EDIT_SECRETARY : SQL_EDIT_MEMBER;
+        int userId = SessionHandler.getUserByEmail(data.newValue);
+        if (data.position == 1 || data.position == 2) {
+            try (Connection connection = DbConnectionHandler.getConnection()) {
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setInt(1, userId);
+                statement.setInt(2, data.committeeId);
+                statement.execute();
+                connection.close();
+            } catch (Exception e) {
+            }
+        } else {
+            String oldValue = getCommittee(data.committeeId).members.get(data.position - 3);
+            String lastName = oldValue.split(" ")[0];
+            String firstName = oldValue.split(" ")[1];
+            try (Connection connection = DbConnectionHandler.getConnection()) {
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setInt(1, userId);
+                statement.setInt(2, data.committeeId);
+                statement.setString(3, firstName);
+                statement.setString(4, lastName);
+                statement.execute();
+                connection.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    private final static String SQL_DELETE_MEMBER = """
+            DELETE FROM upt.committeeMembers
+            WHERE committeeId = ? AND idProf =
+            (SELECT id FROM upt.accounts WHERE firstName = ? AND lastName = ?);
+            """;
+    public static void deleteMember(EditCommitteeRequestData data) {
+        String oldValue = getCommittee(data.committeeId).members.get(data.position - 3);
+        String lastName = oldValue.split(" ")[0];
+        String firstName = oldValue.split(" ")[1];
+        try (Connection connection = DbConnectionHandler.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SQL_DELETE_MEMBER);
+            statement.setInt(1, data.committeeId);
+            statement.setString(2, firstName);
+            statement.setString(3, lastName);
+            statement.execute();
+            connection.close();
+        } catch (Exception e) {
         }
     }
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class StudentStats {
 
+    public int studentId;
+
     @JsonProperty("studName")
     public String studName;
 
@@ -21,4 +23,13 @@ public class StudentStats {
 
     @JsonProperty("coordGrade")
     public float coordGrade;
+
+    @JsonProperty("coordName")
+    public String coordName;
+
+    @JsonProperty("projectMean")
+    public float projectMean;
+
+    @JsonProperty("knowledgeMean")
+    public float knowledgeMean;
 }

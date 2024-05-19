@@ -36,4 +36,22 @@ public class CommitteesRequestHandler {
     public CommitteeData getCommittee(@PathParam("committeeId") int committeeId) {
         return CommitteeMembersHandler.getCommittee(committeeId);
     }
+
+    @POST
+    @Path("editMember")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String editCommitteeMember(EditCommitteeRequestData data) throws Exception {
+        CommitteeMembersHandler.editCommittee(data);
+        return "";
+    }
+
+    @POST
+    @Path("deleteMember")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String deleteCommitteeMember(EditCommitteeRequestData data) throws Exception {
+        if (data.position >= 3) {
+            CommitteeMembersHandler.deleteMember(data);
+        }
+        return "";
+    }
 }
