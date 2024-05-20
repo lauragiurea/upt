@@ -80,9 +80,11 @@ public class ExamGradingHandler {
             """;
     public static OtherGradesResponseData getOtherGrades(int userId) {
         OtherGradesResponseData response = new OtherGradesResponseData();
+
         int committeeId = CommitteesHandler.getCommitteeId(userId);
         CommitteeData committeeData = CommitteeMembersHandler.getCommittee(committeeId);
         List<String> professors = Stream.concat(committeeData.members.stream(), Stream.of(committeeData.president)).sorted().toList();
+
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_OTHER_GRADES);
             statement.setInt(1, committeeId);
@@ -120,7 +122,7 @@ public class ExamGradingHandler {
                 data.grades.sort(Comparator.comparing(a -> a.profName));
             }
             connection.close();
-            response = new OtherGradesResponseData(students, professors);
+            response = new OtherGradesResponseData(committeeId, students, professors);
         } catch (Exception e) {
             return new OtherGradesResponseData();
         }
