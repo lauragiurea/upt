@@ -32,7 +32,7 @@ public class FilesRequestHandler {
 
     @POST
     @Path("professor/upload/{studentId}/{fileName}")
-    public String handleUpload(@PathParam("fileName") String fileName, @PathParam("studentId") int studentId,
+    public String handleProfessorUpload(@PathParam("fileName") String fileName, @PathParam("studentId") int studentId,
                                byte[] fileBytes) throws Exception {
         String directoryPath = "files/" + studentId;
         new File(directoryPath).mkdirs();
@@ -91,46 +91,44 @@ public class FilesRequestHandler {
     }
 
     @GET
-    @Path("download/anexa4/{studentId} ")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Path("download/anexa/{studentId}")
+    @Produces("application/pdf")
     public Response handleDownloadAnexa4(@PathParam("studentId") int studentId) {
-        File anexa4 = null;
-
-        File[] allFiles = new File("files/" + studentId).listFiles();
-        if (allFiles != null) {
-            for (File file : allFiles) {
-                if(file.getName().toLowerCase().startsWith("anexa")) {
-                    anexa4 = file;
-                }
-            }
-        }
+        File anexa4 = FilesHandler.getAppendix(studentId);
         String fileName = anexa4 != null ? anexa4.getName() : "file.pdf";
 
         Response.ResponseBuilder response = Response.ok((Object) anexa4);
         response.header("Content-Disposition", "attachment; filename=" + fileName);
-        response.type(MediaType.APPLICATION_OCTET_STREAM);
+        response.type("application/pdf");
         return response.build();
     }
 
     @GET
     @Path("download/pv/{studentId}")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Produces("application/pdf")
     public Response handleDownloadPV(@PathParam("studentId") int studentId) {
-        File pv = null;
-
-        File[] allFiles = new File("files/" + studentId).listFiles();
-        if (allFiles != null) {
-            for (File file : allFiles) {
-                if(file.getName().toLowerCase().startsWith("pv")) {
-                    pv = file;
-                }
-            }
-        }
+        File pv = FilesHandler.getPV(studentId);
         String fileName = pv != null ? pv.getName() : "file.pdf";
 
         Response.ResponseBuilder response = Response.ok((Object) pv);
         response.header("Content-Disposition", "attachment; filename=" + fileName);
-        response.type(MediaType.APPLICATION_OCTET_STREAM);
+        response.type("application/pdf");
         return response.build();
+    }
+
+    @GET
+    @Path("{sessionId}/getStudentProject")
+    @Produces(MediaType.APPLICATION_JSON)
+    public StudentFilesData handleGetStudentProject(@PathParam("sessionId") int sessionId) throws Exception {
+        int userId = SessionHandler.getSessionById(sessionId).getUserId();
+        return FilesHandler.getStudentProject(userId);
+    }
+
+    @GET
+    @Path("{sessionId}/getStudentPresentation")
+    @Produces(MediaType.APPLICATION_JSON)
+    public StudentFilesData handleGetStudentPresentation(@PathParam("sessionId") int sessionId) throws Exception {
+        int userId = SessionHandler.getSessionById(sessionId).getUserId();
+        return FilesHandler.getStudentPresentation(userId);
     }
 }

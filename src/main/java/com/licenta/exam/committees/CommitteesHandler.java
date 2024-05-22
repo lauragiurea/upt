@@ -8,6 +8,7 @@ import com.licenta.exam.grading.ExamGradeStatus;
 import com.licenta.exam.grading.ExamGradingHandler;
 import com.licenta.exam.stats.AllStudentsStatsResponseData;
 import com.licenta.exam.stats.StudentStats;
+import com.licenta.files.FilesHandler;
 import com.licenta.session.Session;
 
 import java.sql.Connection;
@@ -56,6 +57,7 @@ public class CommitteesHandler {
             return new ExamStudentsResponseData();
         }
         students.forEach(student -> student.examGrade.status = checkGrade(student.examGrade.mean, student.schoolGrade).toString());
+        students.forEach(student -> student.pvUploaded = FilesHandler.isPvUploaded(student.userId) ? 1 : 0);
         return new ExamStudentsResponseData(students, committeeId);
     }
 

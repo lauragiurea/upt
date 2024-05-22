@@ -5,7 +5,6 @@ import com.licenta.session.SessionHandler;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.Collections;
 
 @Path("announcements")
 public class AnnouncementsRequestHandler {
@@ -26,5 +25,35 @@ public class AnnouncementsRequestHandler {
     @Produces(MediaType.APPLICATION_JSON)
     public AnnouncementsResponseData getAnnouncements() {
         return AnnouncementsHandler.getAnnouncements();
+    }
+
+    @POST
+    @Path("configProjectUpload")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String configProjectUpload(UploadConfigData data) {
+        UploadConfigHandler.configProjectUpload(data);
+        return "";
+    }
+
+    @POST
+    @Path("configPresentationUpload")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String configPresentationUpload(UploadConfigData data) {
+        UploadConfigHandler.configPresentationUpload(data);
+        return "";
+    }
+
+    @GET
+    @Path("getProjectUploadConfig")
+    @Produces(MediaType.APPLICATION_JSON)
+    public UploadConfigData getProjectUploadConfig() {
+        return UploadConfigHandler.getProjectUploadConfig();
+    }
+
+    @GET
+    @Path("getPresentationUploadConfig")
+    @Produces(MediaType.APPLICATION_JSON)
+    public UploadConfigData getPresentationUploadConfig() {
+        return UploadConfigHandler.getPresentationUploadConfig();
     }
 }

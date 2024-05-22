@@ -18,4 +18,7 @@ public class CoordStudentData {
 
     @JsonProperty("grade")
     public float grade;
+
+    @JsonProperty("appendixUploaded")
+    public int appendixUploaded;
 }

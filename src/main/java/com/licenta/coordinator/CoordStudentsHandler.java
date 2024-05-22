@@ -1,6 +1,7 @@
 package com.licenta.coordinator;
 
 import com.licenta.db.DbConnectionHandler;
+import com.licenta.files.FilesHandler;
 import com.licenta.session.Session;
 import com.licenta.session.SessionHandler;
 
@@ -76,19 +77,20 @@ public class CoordStudentsHandler {
             WHERE coordinator = ?;
             """;
     public static CoordStudentsData getStudents(Session session) {
+        List<CoordStudentData> students = new ArrayList<>();
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_COORD_STUDENTS);
             statement.setInt(1, session.getUserId());
             ResultSet rs = statement.executeQuery();
-            List<CoordStudentData> students = new ArrayList<>();
             while (rs.next()) {
                 students.add(getStudentDetails(rs));
             }
             connection.close();
-            return new CoordStudentsData(students);
         } catch (Exception e) {
             return new CoordStudentsData();
         }
+        students.forEach(student -> student.appendixUploaded = FilesHandler.isAppendixUploaded(student.studentId) ? 1 : 0);
+        return new CoordStudentsData(students);
     }
 
     private static CoordStudentData getStudentDetails(ResultSet rs) throws SQLException {

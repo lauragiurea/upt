@@ -30,4 +30,7 @@ public class ExamStudentData {
 
     @JsonProperty("examGrade")
     public ExamGradeResponseData examGrade;
+
+    @JsonProperty("pvUploaded")
+    public int pvUploaded;
 }
