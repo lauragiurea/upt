@@ -1,7 +1,6 @@
-package com.licenta.committees;
+package com.licenta.committees.members;
 
 import com.licenta.db.DbConnectionHandler;
-import com.licenta.exam.grading.ExamGradeStatus;
 import com.licenta.session.SessionHandler;
 
 import java.sql.Connection;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public class CommitteeMembersHandler {
 
-    public static void addCommittee(CommitteeData data) throws Exception {
+    public static void addCommittee(CommitteeMembersData data) throws Exception {
         addPresident(data.president, data.committeeId);
         addSecretary(data.secretary, data.committeeId);
         addMembers(data.members, data.committeeId);
@@ -79,8 +78,8 @@ public class CommitteeMembersHandler {
         }
     }
 
-    public static CommitteeData getCommittee(int committeeId) {
-        CommitteeData data = new CommitteeData();
+    public static CommitteeMembersData getCommittee(int committeeId) {
+        CommitteeMembersData data = new CommitteeMembersData();
         data.committeeId = committeeId;
         data.president = getCommitteePresident(committeeId);
         data.secretary = getCommitteeSecretary(committeeId);

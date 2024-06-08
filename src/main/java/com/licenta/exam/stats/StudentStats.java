@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class StudentStats {
 
+    @JsonProperty("studentId")
     public int studentId;
 
     @JsonProperty("studName")

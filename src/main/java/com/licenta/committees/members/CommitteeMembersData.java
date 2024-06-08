@@ -1,12 +1,14 @@
-package com.licenta.committees;
+package com.licenta.committees.members;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.ws.rs.DefaultValue;
 import java.util.List;
 
-public class CommitteeData {
+public class CommitteeMembersData {
 
     @JsonProperty("committeeId")
+    @DefaultValue("0")
     public int committeeId;
 
     @JsonProperty("president")

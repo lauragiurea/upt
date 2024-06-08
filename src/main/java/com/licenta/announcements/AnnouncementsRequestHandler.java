@@ -28,7 +28,7 @@ public class AnnouncementsRequestHandler {
     }
 
     @POST
-    @Path("configProjectUpload")
+    @Path("projectUploadConfig")
     @Produces(MediaType.TEXT_PLAIN)
     public String configProjectUpload(UploadConfigData data) {
         UploadConfigHandler.configProjectUpload(data);
@@ -36,7 +36,7 @@ public class AnnouncementsRequestHandler {
     }
 
     @POST
-    @Path("configPresentationUpload")
+    @Path("presentationUploadConfig")
     @Produces(MediaType.TEXT_PLAIN)
     public String configPresentationUpload(UploadConfigData data) {
         UploadConfigHandler.configPresentationUpload(data);
@@ -44,14 +44,14 @@ public class AnnouncementsRequestHandler {
     }
 
     @GET
-    @Path("getProjectUploadConfig")
+    @Path("projectUploadConfig")
     @Produces(MediaType.APPLICATION_JSON)
     public UploadConfigData getProjectUploadConfig() {
         return UploadConfigHandler.getProjectUploadConfig();
     }
 
     @GET
-    @Path("getPresentationUploadConfig")
+    @Path("presentationUploadConfig")
     @Produces(MediaType.APPLICATION_JSON)
     public UploadConfigData getPresentationUploadConfig() {
         return UploadConfigHandler.getPresentationUploadConfig();

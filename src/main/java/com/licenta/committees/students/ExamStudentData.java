@@ -1,4 +1,4 @@
-package com.licenta.exam.committees;
+package com.licenta.committees.students;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.licenta.exam.grading.ExamGradeResponseData;

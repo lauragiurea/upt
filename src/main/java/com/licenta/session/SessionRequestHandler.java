@@ -14,8 +14,8 @@ public class SessionRequestHandler {
         return SessionHandler.generateNewSession(data);
     }
 
-    @GET
-    @Path("{sessionId}/delete")
+    @DELETE
+    @Path("{sessionId}")
     @Produces(MediaType.TEXT_PLAIN)
     public String handleDeleteSession(@PathParam("sessionId") int sessionId) throws Exception {
         SessionHandler.deleteSession(sessionId);

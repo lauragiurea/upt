@@ -1,8 +1,6 @@
-package com.licenta.exam.committees;
+package com.licenta.committees.students;
 
 import com.licenta.db.DbConnectionHandler;
-import com.licenta.exam.grading.ExamGradeResponseData;
-import com.licenta.exam.grading.ExamGradeStatus;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,7 +9,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class CommitteesGenerator {
 
@@ -150,14 +147,14 @@ public class CommitteesGenerator {
             UPDATE upt.committeeStudents
             SET committeeId = ? WHERE idStud = ?
             """;
-    public static void changeCommittee(int idStud, int committeeId) throws Exception {
-        if (committeeId > getCommitteesCount()) {
+    public static void changeCommittee(MoveStudentRequestData data) throws Exception {
+        if (data.committeeId > getCommitteesCount()) {
             throw new Exception("Invalid committee");
         }
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_COMMITTEE);
-            statement.setInt(1, committeeId);
-            statement.setInt(2, idStud);
+            statement.setInt(1, data.committeeId);
+            statement.setInt(2, data.studentId);
             statement.execute();
             connection.close();
         } catch (Exception e) {

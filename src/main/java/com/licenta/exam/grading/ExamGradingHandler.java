@@ -1,9 +1,9 @@
 package com.licenta.exam.grading;
 
-import com.licenta.committees.CommitteeData;
-import com.licenta.committees.CommitteeMembersHandler;
+import com.licenta.committees.members.CommitteeMembersData;
+import com.licenta.committees.members.CommitteeMembersHandler;
 import com.licenta.db.DbConnectionHandler;
-import com.licenta.exam.committees.CommitteesHandler;
+import com.licenta.committees.students.CommitteesHandler;
 import com.licenta.session.Session;
 
 import java.sql.Connection;
@@ -82,7 +82,7 @@ public class ExamGradingHandler {
         OtherGradesResponseData response = new OtherGradesResponseData();
 
         int committeeId = CommitteesHandler.getCommitteeId(userId);
-        CommitteeData committeeData = CommitteeMembersHandler.getCommittee(committeeId);
+        CommitteeMembersData committeeData = CommitteeMembersHandler.getCommittee(committeeId);
         List<String> professors = Stream.concat(committeeData.members.stream(), Stream.of(committeeData.president)).sorted().toList();
 
         try (Connection connection = DbConnectionHandler.getConnection()) {

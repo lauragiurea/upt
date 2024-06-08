@@ -1,4 +1,4 @@
-package com.licenta.committees;
+package com.licenta.committees.members;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

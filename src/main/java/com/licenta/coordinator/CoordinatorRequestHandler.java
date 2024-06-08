@@ -6,11 +6,11 @@ import com.licenta.session.SessionHandler;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-@Path("{sessionId}/coordinator")
+@Path("coordinator/{sessionId}")
 public class CoordinatorRequestHandler {
 
     @GET
-    @Path("getStudents")
+    @Path("students")
     @Produces(MediaType.APPLICATION_JSON)
     public CoordStudentsData handleGetStudents(@PathParam("sessionId") int sessionId) throws Exception {
         Session session = SessionHandler.getSessionById(sessionId);
@@ -18,7 +18,7 @@ public class CoordinatorRequestHandler {
     }
 
     @POST
-    @Path("addStudent")
+    @Path("student")
     @Produces(MediaType.TEXT_PLAIN)
     public String handleAddStudent(@PathParam("sessionId") int sessionId, AddStudentRequestData data) throws Exception {
         Session session = SessionHandler.getSessionById(sessionId);
@@ -27,12 +27,12 @@ public class CoordinatorRequestHandler {
         return "";
     }
 
-    @GET
-    @Path("deleteStudent/{studentEmail}")
+    @DELETE
+    @Path("student")
     @Produces(MediaType.TEXT_PLAIN)
-    public String handleDeleteStudent(@PathParam("sessionId") int sessionId, @PathParam("studentEmail") String studentEmail) throws Exception {
+    public String handleDeleteStudent(@PathParam("sessionId") int sessionId, DeleteStudentRequestData data) throws Exception {
         Session session = SessionHandler.getSessionById(sessionId);
-        int studentId = SessionHandler.getUserByEmail(studentEmail);
+        int studentId = SessionHandler.getUserByEmail(data.email);
         CoordStudentsHandler.deleteStudent(session, studentId);
         return "";
     }
