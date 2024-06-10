@@ -7,8 +7,8 @@ public class CoordStudentData {
     @JsonProperty("studentId")
     public int studentId;
 
-    @JsonProperty("email")
-    public String email;
+    @JsonProperty("studentName")
+    public String studentName;
 
     @JsonProperty("projectName")
     public String projectName;

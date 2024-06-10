@@ -69,7 +69,7 @@ public class CoordStudentsHandler {
     }
 
     private static final String SQL_GET_COORD_STUDENTS = """
-            SELECT a.id as studentId, a.email as email, s.projectName as projectName,
+            SELECT a.id as studentId, a.lastName as lastName, a.firstName as firstName, s.projectName as projectName,
             s.schoolGrade as schoolGrade, cg.grade as grade
             FROM upt.students s
             JOIN upt.accounts a ON s.idStud = a.id
@@ -96,7 +96,7 @@ public class CoordStudentsHandler {
     private static CoordStudentData getStudentDetails(ResultSet rs) throws SQLException {
         CoordStudentData student = new CoordStudentData();
         student.studentId = rs.getInt("studentId");
-        student.email = rs.getString("email");
+        student.studentName = rs.getString("lastName") + " " + rs.getString("firstName");
         student.projectName = rs.getString("projectName");
         student.schoolGrade = rs.getFloat("schoolGrade");
         student.grade = rs.getFloat("grade");
