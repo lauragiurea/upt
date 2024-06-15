@@ -12,14 +12,6 @@ import java.util.List;
 
 public class CommitteesGenerator {
 
-    public static CommitteeStudentsResponseData getOrGenerateCommittees() {
-        if (areCommitteesGenerated()) {
-            return getCommittees();
-        } else {
-            return generateCommittees();
-        }
-    }
-
     private static final String SQL_GET_COMMITTEES = """
             SELECT committeeId, idStud, studLastName, studFirstName, lastName as coordLastName, firstName as coordFirstName FROM
                 (SELECT committeeId, idStud, lastname as studLastName, firstName as studFirstName, coordinator FROM upt.committeeStudents
@@ -27,7 +19,7 @@ public class CommitteesGenerator {
                 JOIN upt.accounts ON id = idStud) students
             JOIN upt.accounts on students.coordinator = id;
             """;
-    private static CommitteeStudentsResponseData getCommittees() {
+    public static CommitteeStudentsResponseData getCommittees() {
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_COMMITTEES);
             ResultSet rs = statement.executeQuery();
@@ -42,16 +34,15 @@ public class CommitteesGenerator {
         }
     }
 
-    private static CommitteeStudentsResponseData generateCommittees() {
+    public static void generateCommittees() {
         int committeesCount = getCommitteesCount();
         if (committeesCount == 0) {
-            return new CommitteeStudentsResponseData();
+            return;
         }
         List<CommitteeStudentData> students = getAllStudents();
         Collections.shuffle(students);
         students.forEach(student -> student.committeeId = (students.indexOf(student) % committeesCount) + 1);
         insertCommittees(students);
-        return new CommitteeStudentsResponseData(students);
     }
 
     private static final String SQL_GET_COMMITTEES_COUNT = """

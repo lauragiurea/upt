@@ -84,8 +84,16 @@ public class CommitteesRequestHandler {
     @GET
     @Path("all")
     @Produces(MediaType.APPLICATION_JSON)
-    public CommitteeStudentsResponseData generateCommittees() {
-        return CommitteesGenerator.getOrGenerateCommittees();
+    public CommitteeStudentsResponseData getCommittees() {
+        return CommitteesGenerator.getCommittees();
+    }
+
+    @POST
+    @Path("generate")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String generateCommittees() {
+        CommitteesGenerator.generateCommittees();
+        return "";
     }
 
     @POST
