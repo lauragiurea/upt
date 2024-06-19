@@ -124,18 +124,20 @@ public class SessionHandler {
     }
 
     private static final String SQL_CHECK_ACC = """
-    SELECT id FROM upt.accounts
-    WHERE email = ? AND password = ?
+    SELECT id, password FROM upt.accounts
+    WHERE email = ?;
     """;
     private static int getAccountId(String email, String password) {
         try (Connection connection = DbConnectionHandler.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SQL_CHECK_ACC);
             statement.setString(1, email);
-            statement.setString(2, password);
             ResultSet rs = statement.executeQuery();
             int id = 0;
-            while (rs.next()) {
-                id = rs.getInt("id");
+            if (rs.next()) {
+                String hashedPassword = rs.getString("password");
+                if (PasswordValidator.validate(password, hashedPassword)) {
+                    id = rs.getInt("id");
+                }
             }
             connection.close();
             return id;
