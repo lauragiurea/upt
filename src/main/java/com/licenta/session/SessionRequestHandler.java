@@ -1,6 +1,7 @@
 package com.licenta.session;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.licenta.common.JsonHelper;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -19,6 +20,6 @@ public class SessionRequestHandler {
     @Produces(MediaType.TEXT_PLAIN)
     public String handleDeleteSession(@PathParam("sessionId") int sessionId) throws Exception {
         SessionHandler.deleteSession(sessionId);
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 }

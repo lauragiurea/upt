@@ -1,4 +1,4 @@
-package com.licenta.demo;
+package com.licenta.common;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

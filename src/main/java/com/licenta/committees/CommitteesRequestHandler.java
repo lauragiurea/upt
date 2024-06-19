@@ -7,6 +7,7 @@ import com.licenta.committees.members.CommitteeMembersData;
 import com.licenta.committees.members.CommitteeMembersHandler;
 import com.licenta.committees.members.EditCommitteeRequestData;
 import com.licenta.committees.students.*;
+import com.licenta.common.JsonHelper;
 import com.licenta.session.Session;
 import com.licenta.session.SessionHandler;
 
@@ -33,7 +34,7 @@ public class CommitteesRequestHandler {
     public String addCommittee(@PathParam("committeeId") int committeeId, CommitteeMembersData data) throws Exception {
         data.committeeId = committeeId;
         CommitteeMembersHandler.addCommittee(data);
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 
     @GET
@@ -48,7 +49,7 @@ public class CommitteesRequestHandler {
     @Produces(MediaType.TEXT_PLAIN)
     public String editCommitteeMember(EditCommitteeRequestData data) throws Exception {
         CommitteeMembersHandler.editCommittee(data);
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 
     @DELETE
@@ -58,7 +59,7 @@ public class CommitteesRequestHandler {
         if (data.position >= 3) {
             CommitteeMembersHandler.deleteMember(data);
         }
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 
     @GET
@@ -93,7 +94,7 @@ public class CommitteesRequestHandler {
     @Produces(MediaType.APPLICATION_JSON)
     public String generateCommittees() {
         CommitteesGenerator.generateCommittees();
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 
     @POST
@@ -101,7 +102,7 @@ public class CommitteesRequestHandler {
     @Produces(MediaType.TEXT_PLAIN)
     public String changeCommittee(MoveStudentRequestData data) throws Exception {
         CommitteesGenerator.changeCommittee(data);
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 
     @GET

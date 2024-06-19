@@ -71,7 +71,6 @@ public class CommitteesHandler {
         student.projectName = rs.getString("projectName");
         student.coordName = rs.getString("coordLastName") + " " + rs.getString("coordFirstName");
         student.coordGrade = rs.getFloat("grade");
-        student.hour = rs.getString("hour");
         student.schoolGrade = rs.getFloat("schoolGrade");
         student.examGrade = new ExamGradeResponseData();
         student.examGrade.mean = rs.getFloat("mean");

@@ -1,5 +1,6 @@
 package com.licenta.coordinator;
 
+import com.licenta.common.JsonHelper;
 import com.licenta.session.Session;
 import com.licenta.session.SessionHandler;
 
@@ -18,31 +19,11 @@ public class CoordinatorRequestHandler {
     }
 
     @POST
-    @Path("student")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String handleAddStudent(@PathParam("sessionId") int sessionId, AddStudentRequestData data) throws Exception {
-        Session session = SessionHandler.getSessionById(sessionId);
-        int studentId = SessionHandler.getUserByEmail(data.email);
-        CoordStudentsHandler.addStudent(session, studentId, data.projectName, data.schoolGrade);
-        return "";
-    }
-
-    @DELETE
-    @Path("student")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String handleDeleteStudent(@PathParam("sessionId") int sessionId, DeleteStudentRequestData data) throws Exception {
-        Session session = SessionHandler.getSessionById(sessionId);
-        int studentId = SessionHandler.getUserByEmail(data.email);
-        CoordStudentsHandler.deleteStudent(session, studentId);
-        return "";
-    }
-
-    @POST
     @Path("grade")
     @Produces(MediaType.TEXT_PLAIN)
     public String handleGrading(@PathParam("sessionId") int sessionId, CoordGradeRequestData data) throws Exception {
         Session session = SessionHandler.getSessionById(sessionId);
         CoordStudentsHandler.addGrade(session, data.studentId, data.grade);
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 }

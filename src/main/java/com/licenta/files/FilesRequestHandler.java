@@ -1,5 +1,6 @@
 package com.licenta.files;
 
+import com.licenta.common.JsonHelper;
 import com.licenta.session.Session;
 import com.licenta.session.SessionHandler;
 
@@ -17,7 +18,7 @@ public class FilesRequestHandler {
                                byte[] fileBytes) throws Exception {
         Session session = SessionHandler.getSessionById(sessionId);
         FilesHandler.uploadProject(fileBytes, session, fileName);
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 
     @POST
@@ -26,7 +27,7 @@ public class FilesRequestHandler {
                                byte[] fileBytes) throws Exception {
         Session session = SessionHandler.getSessionById(sessionId);
         FilesHandler.uploadPresentation(fileBytes, session, fileName);
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 
     @POST
@@ -34,7 +35,7 @@ public class FilesRequestHandler {
     public String handleUploadAppendix(@PathParam("fileName") String fileName, @PathParam("studentId") int studentId,
                                byte[] fileBytes) throws Exception {
         FilesHandler.uploadAppendix(fileBytes, studentId, fileName);
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 
     @POST
@@ -42,7 +43,7 @@ public class FilesRequestHandler {
     public String handleUploadPV(@PathParam("fileName") String fileName, @PathParam("studentId") int studentId,
                                         byte[] fileBytes) throws Exception {
         FilesHandler.uploadPV(fileBytes, studentId, fileName);
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 
     @GET

@@ -1,5 +1,6 @@
 package com.licenta.announcements;
 
+import com.licenta.common.JsonHelper;
 import com.licenta.session.Session;
 import com.licenta.session.SessionHandler;
 
@@ -14,10 +15,10 @@ public class AnnouncementsRequestHandler {
     @Produces(MediaType.TEXT_PLAIN)
     public String addAnnouncement(@PathParam("sessionId") int sessionId, AddAnnouncementRequestData data) throws Exception {
         if (data.message == null || data.message.isBlank())
-            return "";
+            return JsonHelper.createEmptyJson();
         Session session = SessionHandler.getSessionById(sessionId);
         AnnouncementsHandler.addAnnouncement(session, data);
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 
     @GET
@@ -32,7 +33,7 @@ public class AnnouncementsRequestHandler {
     @Produces(MediaType.TEXT_PLAIN)
     public String configProjectUpload(UploadConfigData data) {
         UploadConfigHandler.configProjectUpload(data);
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 
     @POST
@@ -40,7 +41,7 @@ public class AnnouncementsRequestHandler {
     @Produces(MediaType.TEXT_PLAIN)
     public String configPresentationUpload(UploadConfigData data) {
         UploadConfigHandler.configPresentationUpload(data);
-        return "";
+        return JsonHelper.createEmptyJson();
     }
 
     @GET

@@ -1,4 +1,4 @@
-package com.licenta.demo;
+package com.licenta.common;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.container.ContainerRequestContext;
