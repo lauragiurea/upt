@@ -14,4 +14,9 @@ Pentru rulare, se accesează Add Configuration în IntelliJ, se selectează Tomc
 
 Se pornește serverul din IntelliJ, iar API-ul este gata de utilizare.
 
-Pentru utilizarea întregului proiect, împreună cu site-ul web, se urmează pașii de utilizare a proiectului realizat de Dragotă Tiberiu-Gabriel, găsit la următorul link de github: 
+Pentru utilizarea întregului proiect, împreună cu site-ul web, se urmează pașii de utilizare a proiectului realizat de Dragotă Tiberiu-Gabriel, găsit la următorul link de github: https://github.com/tgdragota/Licenta_Dragota-UPT
+
+Pentru autentificare există numeroase conturi disponibile. Acestea sunt vizibile în tabela accounts din baza de date. Toate conturile se pot accesa folosind parola "parola". Câteva dintre aceste conturi sunt următoarele:
+student: laura.giurea@student.upt.ro
+profesor: ion.sandu@upt.ro
+secretariat: ioana.popescu@secretariat.upt.ro
